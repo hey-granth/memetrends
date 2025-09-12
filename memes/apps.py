@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class MemesConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'memes'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "memes"
