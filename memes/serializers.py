@@ -12,8 +12,11 @@ class MemeSerializer(serializers.ModelSerializer):
             "id",
             "text",
             "media",
-            "created_at",
+            "posted_at",
             "updated_at",
-            "engagement_score",
+            "trending_score",
+            "likes",
             "owner",
+            "comments",
+            "shares",
         ]
