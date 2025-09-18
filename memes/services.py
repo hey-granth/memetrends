@@ -1,5 +1,8 @@
 from config import Config
+import logging
 
+
+logger = logging.getLogger(__name__)
 LEADERBOARD_KEY = "trending_memes"
 
 
@@ -7,10 +10,12 @@ def update_leaderboard(meme_id, score):
     """Update the leaderboard with the given meme ID and score."""
     Config.redis_client.zadd(LEADERBOARD_KEY, {meme_id: score})
     # https://redis.io/docs/latest/commands/zadd/
+    logger.info(f'Leaderboard updated for {meme_id}')
 
 
 def get_top_memes(limit=20):
     """Retrieve the top N memes from the leaderboard."""
+    logger.info(f'Leaderboard retrieved for {limit} memes')
     return Config.redis_client.zrange(
         LEADERBOARD_KEY, 0, limit - 1, desc=True, withscores=True
     )

@@ -26,5 +26,6 @@ class Config:
     X_API_KEY = getenv("X_API_KEY")
     X_API_SECRET = getenv("X_API_SECRET")
     X_BEARER_TOKEN = getenv("X_BEARER_TOKEN")
+    X_BASE_URL = "https://api.twitter.com/2/tweets/search/recent"
 
     ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", "localhost").split(",")
