@@ -13,7 +13,7 @@ class Meme(models.Model):
         max_length=100, null=True, blank=True, choices=PLATFORM_CHOICES
     )
     external_id: str = models.CharField(
-        max_length=100, null=True, blank=True
+        max_length=100, null=True, blank=True, unique=True
     )  # memes.Meme: (models.E004) 'id' can only be used as a field name if the field also sets 'primary_key=True'.
     owner: User = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="memes"
@@ -37,11 +37,14 @@ class Meme(models.Model):
 
     trending_score: float = models.FloatField(default=0.0)
 
+
     class Meta:
-        indexes = [
+        unique_together = (("platform", "external_id"),)
+    indexes = [
             models.Index(fields=["platform", "posted_at"]),
             models.Index(fields=["-trending_score"]),
         ]
+
 
     def __str__(self):
         return f"{self.platform} meme {self.id}"

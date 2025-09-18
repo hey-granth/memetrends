@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from config import Config
+from celery.schedules import crontab
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -145,3 +147,14 @@ CELERY_ACCEPT_CONTENT = Config.CELERY_ACCEPT_CONTENT
 CELERY_TASK_SERIALIZER = Config.CELERY_TASK_SERIALIZER
 CELERY_RESULT_SERIALIZER = Config.CELERY_RESULT_SERIALIZER
 CELERY_TIMEZONE = Config.CELERY_TIMEZONE
+
+CELERY_BEAT_SCHEDULE = {
+    "fetch-reddit": {
+        "task": "ingest.tasks.fetch_reddit_memes",
+        "schedule": crontab(minute="*/15"),  # every 15 minutes
+    },
+    "fetch-twitter": {
+        "task": "ingest.tasks.fetch_twitter_memes",
+        "schedule": crontab(minute="*/30"),  # every 30 minutes
+    },
+}

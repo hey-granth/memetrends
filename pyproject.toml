@@ -9,7 +9,9 @@ dependencies = [
     "django-filter>=25.1",
     "djangorestframework>=3.16.1",
     "djangorestframework-simplejwt>=5.5.1",
+    "praw>=7.8.1",
     "python-dotenv>=1.1.1",
     "redis>=6.4.0",
     "ruff>=0.13.0",
+    "tweepy>=4.16.0",
 ]

@@ -18,3 +18,13 @@ class Config:
     CELERY_TASK_SERIALIZER = "json"
     CELERY_RESULT_SERIALIZER = "json"
     CELERY_TIMEZONE = "UTC"
+
+    REDDIT_CLIENT_ID = getenv("REDDIT_CLIENT_ID")
+    REDDIT_CLIENT_SECRET = getenv("REDDIT_CLIENT_SECRET")
+    REDDIT_USER_AGENT = getenv("REDDIT_USER_AGENT")
+
+    X_API_KEY = getenv("X_API_KEY")
+    X_API_SECRET = getenv("X_API_SECRET")
+    X_BEARER_TOKEN = getenv("X_BEARER_TOKEN")
+
+    ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", "localhost").split(",")
