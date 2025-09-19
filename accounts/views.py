@@ -22,7 +22,8 @@ class RegisterView(APIView):
             return False
         return True
 
-    def register(self, request):
+    # changed from register to post to adhere to RESTful conventions and handle post requests appropriately
+    def post(self, request):
         data = request.data
         username = data.get("username")
         password = data.get("password")
@@ -66,7 +67,8 @@ class RegisterView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user = User.objects.create(username=username, password=password, email=email)
+        # it was previously User.objects.create, changed to create_user for proper password hashing. create_user automatically hashes the password, while create just stores it as it is (critical security issue).
+        user = User.objects.create_user(username=username, password=password, email=email)
         user.save()
         logger.info(f"New user registered: {username}")
         return Response(
