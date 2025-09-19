@@ -1,0 +1,502 @@
+openapi: 3.0.3
+info:
+  title: MemeTrends API
+  version: 1.0.0
+  description: A Django REST API for tracking and analyzing trending memes across social media platforms
+  contact:
+    name: Granth Agarwal
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.memetrends.com
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/auth/login/:
+    post:
+      tags:
+        - Authentication
+      summary: Obtain JWT token pair
+      description: Login with username and password to receive access and refresh tokens
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access:
+                    type: string
+                  refresh:
+                    type: string
+        '401':
+          description: Invalid credentials
+
+  /api/auth/token/refresh/:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh JWT token
+      description: Obtain a new access token using refresh token
+      operationId: tokenRefresh
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh
+              properties:
+                refresh:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access:
+                    type: string
+        '401':
+          description: Invalid refresh token
+
+  /api/auth/register/:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      description: Create a new user account
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+                - email
+              properties:
+                username:
+                  type: string
+                  minLength: 1
+                password:
+                  type: string
+                  minLength: 8
+                  description: Must contain at least 8 characters with letters and numbers
+                email:
+                  type: string
+                  format: email
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User created successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/memes/:
+    get:
+      tags:
+        - Memes
+      summary: List memes
+      description: Retrieve a paginated list of memes with optional filtering
+      operationId: listMemes
+      security: []
+      parameters:
+        - name: platform
+          in: query
+          description: Filter by platform
+          schema:
+            type: string
+            enum: [reddit, twitter, instagram]
+        - name: posted_at__gte
+          in: query
+          description: Filter memes posted after this date
+          schema:
+            type: string
+            format: date-time
+        - name: ordering
+          in: query
+          description: Order results by field
+          schema:
+            type: string
+            enum: [posted_at, -posted_at, created_at, -created_at]
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+        - name: page_size
+          in: query
+          description: Number of items per page (max 100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  next:
+                    type: string
+                    format: uri
+                    nullable: true
+                  previous:
+                    type: string
+                    format: uri
+                    nullable: true
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Meme'
+
+    post:
+      tags:
+        - Memes
+      summary: Create meme
+      description: Create a new meme (requires authentication)
+      operationId: createMeme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemeCreate'
+      responses:
+        '201':
+          description: Meme created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meme'
+        '400':
+          description: Validation error
+        '401':
+          description: Authentication required
+
+  /api/memes/{id}/:
+    get:
+      tags:
+        - Memes
+      summary: Get meme by ID
+      description: Retrieve a specific meme
+      operationId: getMeme
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meme'
+        '404':
+          description: Meme not found
+
+    put:
+      tags:
+        - Memes
+      summary: Update meme
+      description: Update a meme (owner only)
+      operationId: updateMeme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemeCreate'
+      responses:
+        '200':
+          description: Meme updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meme'
+        '400':
+          description: Validation error
+        '401':
+          description: Authentication required
+        '403':
+          description: Permission denied
+        '404':
+          description: Meme not found
+
+    patch:
+      tags:
+        - Memes
+      summary: Partially update meme
+      description: Partially update a meme (owner only)
+      operationId: partialUpdateMeme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemePartialUpdate'
+      responses:
+        '200':
+          description: Meme updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meme'
+        '400':
+          description: Validation error
+        '401':
+          description: Authentication required
+        '403':
+          description: Permission denied
+        '404':
+          description: Meme not found
+
+    delete:
+      tags:
+        - Memes
+      summary: Delete meme
+      description: Delete a meme (owner only)
+      operationId: deleteMeme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Meme deleted successfully
+        '401':
+          description: Authentication required
+        '403':
+          description: Permission denied
+        '404':
+          description: Meme not found
+
+  /api/memes/trending/:
+    get:
+      tags:
+        - Memes
+      summary: Get trending memes
+      description: Retrieve top 10 trending memes ordered by trending score
+      operationId: getTrendingMemes
+      security: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meme'
+                maxItems: 10
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Meme:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        platform:
+          type: string
+          enum: [reddit, twitter, instagram]
+          nullable: true
+        text:
+          type: string
+          nullable: true
+        media:
+          type: object
+          description: JSON field containing media URLs and metadata
+        posted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        trending_score:
+          type: number
+          format: float
+          readOnly: true
+        likes:
+          type: integer
+          minimum: 0
+        comments:
+          type: integer
+          minimum: 0
+        shares:
+          type: integer
+          minimum: 0
+        owner:
+          type: string
+          readOnly: true
+          description: Username of the meme owner
+      required:
+        - media
+        - posted_at
+
+    MemeCreate:
+      type: object
+      properties:
+        platform:
+          type: string
+          enum: [reddit, twitter, instagram]
+          nullable: true
+        text:
+          type: string
+          nullable: true
+        media:
+          type: object
+          description: JSON field containing media URLs and metadata
+        posted_at:
+          type: string
+          format: date-time
+        likes:
+          type: integer
+          minimum: 0
+          default: 0
+        comments:
+          type: integer
+          minimum: 0
+          default: 0
+        shares:
+          type: integer
+          minimum: 0
+          default: 0
+      required:
+        - media
+        - posted_at
+
+    MemePartialUpdate:
+      type: object
+      properties:
+        platform:
+          type: string
+          enum: [reddit, twitter, instagram]
+          nullable: true
+        text:
+          type: string
+          nullable: true
+        media:
+          type: object
+          description: JSON field containing media URLs and metadata
+        posted_at:
+          type: string
+          format: date-time
+        likes:
+          type: integer
+          minimum: 0
+        comments:
+          type: integer
+          minimum: 0
+        shares:
+          type: integer
+          minimum: 0
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        detail:
+          type: string
+          nullable: true
+
+    PaginatedMemeList:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          format: uri
+          nullable: true
+        previous:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Meme'
+
+tags:
+  - name: Authentication
+    description: User authentication and token management
+  - name: Memes
+    description: Meme creation, retrieval, and trending analysis
