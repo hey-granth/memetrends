@@ -2,14 +2,16 @@ services:
   # Managed PostgreSQL Database
   - name: postgres-db
     type: pserv
+    runtime: postgres
     plan: free
-    postgresVersion: 13
+    version: "13"
 
   # Managed Redis Instance
   - name: redis-cache
     type: pserv
+    runtime: redis
     plan: free
-    redisVersion: "6.2"
+    version: "6.2"
 
   # Django Web Service
   - name: web
