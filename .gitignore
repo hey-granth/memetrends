@@ -12,3 +12,5 @@ db.sqlite3
 *.pot
 *.py[cod]
 *$py.class
+
+docker-compose.yml

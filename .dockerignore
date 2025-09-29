@@ -1,0 +1,23 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Python
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.ruff_cache
+
+# IDE
+.idea
+
+# Other
+.env
+db.sqlite3
+memetrends.log
