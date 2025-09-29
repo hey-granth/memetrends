@@ -2,21 +2,19 @@ services:
   # Managed PostgreSQL Database
   - name: postgres-db
     type: pserv
-    plan: free # Or choose a paid plan
-    postgres:
-      version: "13"
+    plan: free
+    postgresVersion: 13
 
   # Managed Redis Instance
   - name: redis-cache
     type: pserv
-    plan: free # Or choose a paid plan
-    redis:
-      version: "6.2"
+    plan: free
+    redisVersion: "6.2"
 
   # Django Web Service
   - name: web
     type: web
-    plan: free # Or choose a paid plan
+    plan: free
     env: docker
     dockerfilePath: ./Dockerfile
     envVars:
@@ -31,15 +29,14 @@ services:
           name: redis-cache
           property: connectionString
       - key: SECRET_KEY
-        generateValue: true # Render will generate a secure secret key
+        generateValue: true
       - key: PYTHONUNBUFFERED
         value: 1
-    autoDeploy: true
 
   # Celery Background Worker
   - name: celery-worker
     type: worker
-    plan: free # Or choose a paid plan
+    plan: free
     env: docker
     dockerfilePath: ./Dockerfile
     dockerCommand: celery -A memetrends worker -l info
@@ -58,6 +55,6 @@ services:
         fromService:
           type: web
           name: web
-          envVarKey: SECRET_KEY # Use the same secret key as the web service
+          envVarKey: SECRET_KEY
       - key: PYTHONUNBUFFERED
         value: 1
