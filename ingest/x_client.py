@@ -16,7 +16,9 @@ def fetch_memes(query="#meme", max_results=20):
         "tweet.fields": "created_at,public_metrics",
     }
     try:
-        logger.info(f"Fetching X posts for query '{query}' with max_results={max_results}")
+        logger.info(
+            f"Fetching X posts for query '{query}' with max_results={max_results}"
+        )
         resp = requests.get(BASE_URL, headers=headers, params=params, timeout=15)
         resp.raise_for_status()
         data = resp.json().get("data", [])

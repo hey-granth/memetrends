@@ -37,14 +37,13 @@ class Meme(models.Model):
 
     trending_score: float = models.FloatField(default=0.0)
 
-
     class Meta:
         unique_together = (("platform", "external_id"),)
-    indexes = [
-            models.Index(fields=["platform", "posted_at"]),
-            models.Index(fields=["-trending_score"]),
-        ]
 
+    indexes = [
+        models.Index(fields=["platform", "posted_at"]),
+        models.Index(fields=["-trending_score"]),
+    ]
 
     def __str__(self):
         return f"{self.platform} meme {self.id}"

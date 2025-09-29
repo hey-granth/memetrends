@@ -61,12 +61,16 @@ Create a `.env` file in the project root:
     X_API_SECRET='your-twitter-api-secret'
     X_BEARER_TOKEN='your-twitter-bearer-token'
 
-### 3. Build and run with Docker
+[//]: # (### 3. Build and run with Docker)
 
-``` bash
-docker-compose build
-docker-compose up
-```
+[//]: # ()
+[//]: # (``` bash)
+
+[//]: # (docker-compose build)
+
+[//]: # (docker-compose up)
+
+[//]: # (```)
 
 API available at `http://localhost:8000/api/`
 

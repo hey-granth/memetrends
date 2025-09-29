@@ -4,27 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('memes', '0003_alter_meme_comments_alter_meme_likes_and_more'),
+        ("memes", "0003_alter_meme_comments_alter_meme_likes_and_more"),
     ]
 
     operations = [
         migrations.RemoveIndex(
-            model_name='meme',
-            name='memes_meme_platfor_629891_idx',
+            model_name="meme",
+            name="memes_meme_platfor_629891_idx",
         ),
         migrations.RemoveIndex(
-            model_name='meme',
-            name='memes_meme_trendin_411049_idx',
+            model_name="meme",
+            name="memes_meme_trendin_411049_idx",
         ),
         migrations.AlterField(
-            model_name='meme',
-            name='external_id',
+            model_name="meme",
+            name="external_id",
             field=models.CharField(blank=True, max_length=100, null=True, unique=True),
         ),
         migrations.AlterUniqueTogether(
-            name='meme',
-            unique_together={('platform', 'external_id')},
+            name="meme",
+            unique_together={("platform", "external_id")},
         ),
     ]

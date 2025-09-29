@@ -68,7 +68,9 @@ class RegisterView(APIView):
             )
 
         # it was previously User.objects.create, changed to create_user for proper password hashing. create_user automatically hashes the password, while create just stores it as it is (critical security issue).
-        user = User.objects.create_user(username=username, password=password, email=email)
+        user = User.objects.create_user(
+            username=username, password=password, email=email
+        )
         user.save()
         logger.info(f"New user registered: {username}")
         return Response(

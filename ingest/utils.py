@@ -22,7 +22,9 @@ def save_posts(posts):
                     "posted_at": (
                         django_timezone.make_aware(parse_datetime(p["posted_at"]))
                         if isinstance(p.get("posted_at"), str)
-                        else datetime.fromtimestamp(p.get("posted_at", 0), tz=timezone.utc)
+                        else datetime.fromtimestamp(
+                            p.get("posted_at", 0), tz=timezone.utc
+                        )
                     ),
                     "likes": p.get("likes", 0),
                     "comments": p.get("comments", 0),
