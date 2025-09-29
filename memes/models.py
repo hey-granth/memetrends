@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .services import update_leaderboard
 
 
 class Meme(models.Model):
@@ -36,6 +37,11 @@ class Meme(models.Model):
     comments: int = models.PositiveIntegerField(default=0)
 
     trending_score: float = models.FloatField(default=0.0)
+
+    def save(self, *args, **kwargs):
+        self.trending_score = self.likes + self.comments + self.shares
+        super().save(*args, **kwargs)
+        update_leaderboard(self.id, self.trending_score)
 
     class Meta:
         unique_together = (("platform", "external_id"),)

@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from config import Config
 from .services import LEADERBOARD_KEY
 from .models import Meme
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly,
+    AllowAny,
+    IsAuthenticated,
+)
 from .serializers import MemeSerializer
 from .permissions import IsOwnerOrReadOnly
 import logging
@@ -21,7 +25,7 @@ class MemeViewSet(viewsets.ModelViewSet):
     def get_permissions(self) -> list:
         # list means GET /memes/, retrieve means GET /memes/{id}
         # create means POST /memes/, update means PUT /memes/{id}, partial_update means PATCH /memes/{id}, destroy means DELETE /memes/{id}
-        if self.action in ['list', 'retrieve']:
+        if self.action in ["list", "retrieve"]:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]

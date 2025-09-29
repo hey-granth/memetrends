@@ -1,6 +1,6 @@
 from celery import shared_task
 from .utils import save_posts
-import x_client, reddit_client
+from . import x_client, reddit_client
 import logging
 
 

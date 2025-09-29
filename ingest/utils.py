@@ -3,6 +3,7 @@ from django.utils.dateparse import parse_datetime
 from datetime import datetime, timezone
 from django.utils import timezone as django_timezone
 import logging
+from django.contrib.auth.models import User
 
 
 logger = logging.getLogger(__name__)
@@ -11,6 +12,7 @@ logger = logging.getLogger(__name__)
 def save_posts(posts):
     logger.info(f"Saving {len(posts)} posts to database")
     saved = 0
+    user, created = User.objects.get_or_create(username="default_user")
     for p in posts:
         try:
             Meme.objects.update_or_create(
@@ -29,6 +31,7 @@ def save_posts(posts):
                     "likes": p.get("likes", 0),
                     "comments": p.get("comments", 0),
                     "shares": p.get("shares", 0),
+                    "owner": user,
                 },
             )
             saved += 1
