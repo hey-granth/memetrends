@@ -2,7 +2,7 @@ services:
   # Managed PostgreSQL Database
   - name: postgres-db
     type: pserv
-    runtime: postgres
+    runtime: postgresql
     plan: free
 
   # Managed Redis Instance
@@ -19,13 +19,11 @@ services:
     dockerfilePath: ./Dockerfile
     envVars:
       - key: DATABASE_URL
-        fromService:
-          type: pserv
+        fromDatabase:
           name: postgres-db
           property: connectionString
       - key: CELERY_BROKER_URL
-        fromService:
-          type: pserv
+        fromDatabase:
           name: redis-cache
           property: connectionString
       - key: SECRET_KEY
@@ -42,13 +40,11 @@ services:
     dockerCommand: celery -A memetrends worker -l info
     envVars:
       - key: DATABASE_URL
-        fromService:
-          type: pserv
+        fromDatabase:
           name: postgres-db
           property: connectionString
       - key: CELERY_BROKER_URL
-        fromService:
-          type: pserv
+        fromDatabase:
           name: redis-cache
           property: connectionString
       - key: SECRET_KEY
