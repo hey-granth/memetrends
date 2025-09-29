@@ -4,14 +4,12 @@ services:
     type: pserv
     runtime: postgres
     plan: free
-    version: "13"
 
   # Managed Redis Instance
   - name: redis-cache
     type: pserv
     runtime: redis
     plan: free
-    version: "6.2"
 
   # Django Web Service
   - name: web
